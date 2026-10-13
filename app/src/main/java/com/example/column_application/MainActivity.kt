@@ -8,14 +8,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,102 +32,154 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Column_applicationTheme {
-                MiVistaPrevia()
+                ViewContainer()
             }
         }
     }
 }
 
+// ==========================================
+// BARRA SUPERIOR - Lavanda
+// ==========================================
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun Toolbar() {
+    TopAppBar(
+        title = {
+            Text(text = "Perfil en Scaffold")
+        },
+        backgroundColor = Color(0xFF6366F1),  // Lavanda
+        contentColor = Color.White
+    )
 }
 
+// ==========================================
+// BOTÓN FLOTANTE - Rosa suave
+// ==========================================
+@Composable
+fun FAB(onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = onClick,
+        backgroundColor = Color(0xFFEC407A)  // Rosa
+    ) {
+        Text(text = "+", fontSize = 24.sp)
+    }
+}
+
+// ==========================================
+// ESTRUCTURA PRINCIPAL
+// ==========================================
 @Preview(showBackground = true)
 @Composable
-fun MiVistaPrevia() {
+fun ViewContainer() {
+    var contadorBoton by rememberSaveable { mutableStateOf(0) }
+
+    Scaffold(
+        topBar = { Toolbar() },
+        floatingActionButton = { FAB(onClick = { contadorBoton++ }) },
+        floatingActionButtonPosition = FabPosition.End
+    ) { paddingValues ->
+        Content(
+            modifier = Modifier.padding(paddingValues),
+            contadorBoton = contadorBoton
+        )
+    }
+}
+
+// ==========================================
+// CONTENIDO CON COLORES MEJORADOS
+// ==========================================
+@Composable
+fun Content(
+    modifier: Modifier = Modifier,
+    contadorBoton: Int = 0
+) {
     Column_applicationTheme {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
-                .background(Color(0xFF0D47A1)),
+                .background(Color(0xFFEDE7F6)),  // Fondo lavanda clarito
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // 1. IMAGEN PRINCIPAL
+            Image(
+                painter = painterResource(id = R.drawable.img),
+                contentDescription = "Imagen de perfil",
+                modifier = Modifier
+                    .size(180.dp)
+                    .padding(bottom = 16.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            // 2. NOMBRE
             Text(
-                text = "Elemento 1",
-                fontSize = 32.sp,
-                color = Color.Blue
+                text = "Luis Armando Cervantes Tellez",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF4A148C)  // Lavanda oscuro
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // 3. DESCRIPCIÓN
+            Text(
+                text = "Estudiante de Ingeniería • Desarrollo Móvil",
+                fontSize = 16.sp,
+                color = Color(0xFF6A1B9A)
             )
 
             Spacer(modifier = Modifier.height(24.dp))
-            Spacer(modifier = Modifier.height(24.dp))
 
+            // 4. FILA DE LENGUAJES
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                item { Text(text = "Java", fontSize = 28.sp) }
-                item { Text(text = "Kotlin", fontSize = 28.sp) }
-                item { Text(text = "Swift", fontSize = 28.sp) }
-                item { Text(text = "Dart", fontSize = 28.sp) }
-                item { Text(text = "Python", fontSize = 28.sp) }
+                item { Text(text = "Java", fontSize = 20.sp, color = Color(0xFF5C6BC0)) }
+                item { Text(text = "Kotlin", fontSize = 20.sp, color = Color(0xFF5C6BC0)) }
+                item { Text(text = "Swift", fontSize = 20.sp, color = Color(0xFF5C6BC0)) }
+                item { Text(text = "Dart", fontSize = 20.sp, color = Color(0xFF5C6BC0)) }
+                item { Text(text = "Python", fontSize = 20.sp, color = Color(0xFF5C6BC0)) }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-            Text(
-                text = "Elemento 2",
-                fontSize = 32.sp,
-                color = Color.Red
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Image(
-                painter = painterResource(id = R.drawable.img),
-                contentDescription = "Imagen de ejemplo",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                contentScale = ContentScale.Fit
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                text = "Elemento 3",
-                fontSize = 32.sp,
-                color = Color.Magenta
-            )
-
-            // === AQUÍ VAMOS A AGREGAR EL CONTADOR DE LIKES ===
-            Spacer(modifier = Modifier.height(24.dp))
-
-            var contador by rememberSaveable { mutableStateOf(0) }
-
+            // 5. CONTADOR DE CORAZÓN
+            var contadorCorazon by rememberSaveable { mutableStateOf(0) }
             Row(
-                modifier = Modifier
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                modifier = Modifier.padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
-                    tint = Color.Red,
+                    tint = Color(0xFFE91E63),
                     modifier = Modifier
-                        .clickable { contador++ }
+                        .size(28.dp)
+                        .clickable { contadorCorazon++ }
                 )
                 Text(
-                    text = "$contador",
-                    color = Color.White,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                    text = "$contadorCorazon",
+                    fontSize = 22.sp,
+                    color = Color(0xFF4A148C),
+                    fontWeight = FontWeight.Medium
                 )
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // 6. CONTADOR DEL BOTÓN FLOTANTE
+            Text(
+                text = "Botón presionado: $contadorBoton",
+                fontSize = 18.sp,
+                color = Color(0xFF6A1B9A)
+            )
         }
     }
 }
