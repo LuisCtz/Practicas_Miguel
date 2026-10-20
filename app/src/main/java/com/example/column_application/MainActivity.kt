@@ -27,6 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.column_application.ui.theme.Column_applicationTheme
 
+// Importaciones para Google Maps
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.android.gms.maps.model.LatLng
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +55,7 @@ fun Toolbar() {
         title = {
             Text(text = "Perfil en Scaffold")
         },
-        backgroundColor = Color(0xFF6366F1),  // Lavanda
+        backgroundColor = Color(0xFF6366F1),
         contentColor = Color.White
     )
 }
@@ -59,7 +67,7 @@ fun Toolbar() {
 fun FAB(onClick: () -> Unit) {
     FloatingActionButton(
         onClick = onClick,
-        backgroundColor = Color(0xFFEC407A)  // Rosa
+        backgroundColor = Color(0xFFEC407A)
     ) {
         Text(text = "+", fontSize = 24.sp)
     }
@@ -97,7 +105,7 @@ fun Content(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color(0xFFEDE7F6)),  // Fondo lavanda clarito
+                .background(Color(0xFFEDE7F6)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
@@ -118,7 +126,7 @@ fun Content(
                 text = "Luis Armando Cervantes Tellez",
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF4A148C)  // Lavanda oscuro
+                color = Color(0xFF4A148C)
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -181,5 +189,49 @@ fun Content(
                 color = Color(0xFF6A1B9A)
             )
         }
+    }
+}
+
+// ==========================================
+// MAPA DE GOOGLE
+// ==========================================
+@Composable
+fun MyGoogleMaps() {
+    val posicion1 = LatLng(19.7837, -98.0098)  // Tepeapulco
+    val posicion2 = LatLng(19.7900, -98.0150)  // Punto Norte
+    val posicion3 = LatLng(19.7750, -97.9950)  // Punto Sur
+
+    val camara = rememberCameraPositionState {
+        position = com.google.android.gms.maps.model.CameraPosition.fromLatLngZoom(
+            posicion1,
+            13f
+        )
+    }
+
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = camara,
+        properties = com.google.maps.android.compose.MapProperties(
+            mapType = com.google.maps.android.compose.MapType.NORMAL
+        ),
+        uiSettings = com.google.maps.android.compose.MapUiSettings(
+            zoomControlsEnabled = false
+        )
+    ) {
+        Marker(
+            position = posicion1,
+            title = "Tepeapulco, Hidalgo",
+            snippet = "Ubicación principal"
+        )
+        Marker(
+            position = posicion2,
+            title = "Punto de Referencia 1",
+            snippet = "Zona Norte"
+        )
+        Marker(
+            position = posicion3,
+            title = "Punto de Referencia 2",
+            snippet = "Zona Sur"
+        )
     }
 }
